@@ -1,0 +1,25 @@
+#include <kipr/botball.h>
+//right motor port = 0
+//left motor port = 1
+//arm port = 0
+//claw port = 1
+//button port(digital) = 0
+int main()
+{
+    //this variable to store the amount of time the motor has gone forward
+    int x = 0;
+    //While button ain't pressed, move forward
+    while(digital(0) < 1)
+    {
+     	motor(0, 30);
+        motor(1, 30);
+        msleep(1);
+        x += 1;
+    }
+    //move backwards the same amount of time it went forwards
+    motor(0, -30);
+    motor(1, -30);
+    msleep(x);
+    ao();
+    return x;
+}

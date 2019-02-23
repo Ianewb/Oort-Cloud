@@ -1,0 +1,102 @@
+#include <kipr/botball.h>
+
+//Created by: Jason Wu on 12 Jan 2019
+int leftMotor = 0;
+int rightMotor = 1;
+int topHat = 0;
+int LorR = 0;
+int black = 3600; //this is not an accurate reading. the actual value of black is about 3650 - 3890 or something like that
+//move forward method
+void moveForward(int power, int time)
+{
+    motor(leftMotor, power);
+    motor(rightMotor, power);
+    msleep(time);
+}
+//turn left method
+void turnLeft()
+{
+ 	motor(leftMotor, -25);
+    motor(rightMotor, 25);
+    msleep(350);
+}
+void arcLeft()
+{
+ 	motor(leftMotor, 25);
+}
+//turn right method
+void turnRight()
+{
+ 	motor(leftMotor, 25);
+    motor(rightMotor, -25);
+    msleep(350);
+}
+void arcRight()
+{
+ 	motor(rightMotor, 25);   
+}
+void STAHP()
+{
+ 	motor(leftMotor, 0);
+    motor(rightMotor, 0);
+    msleep(10);
+}
+int main()
+{
+    //as long as the top hat reads black, move forward, else, arc
+	while(analog(topHat) > black)
+    {
+        moveForward(50, 1);
+        //turn left when not reading black, if still reading white then turn right twice.
+        if(analog(topHat)<black && LorR != 1) 
+        {
+         	arcRight();
+            LorR = 1;
+        }
+        if(analog(topHat)<black && LorR != 0)
+        {
+         	arcLeft();
+            LorR = 0;
+        } 
+        msleep(1000);
+    }
+
+
+    //turns off if not reading black after turning
+    
+    return 0;
+}
+            
+    
+/*
+moveForward(50,1);
+        STAHP();
+        if(analog(topHat)<black && LorR != 1)
+        {
+         	turnLeft();
+            if(analog(topHat)<black)
+            {
+            	LorR = 1;
+            }
+        }
+        if(analog(topHat)<black && LorR != 0)
+        {
+            
+          	turnRight();
+            if(analog(topHat)<black)
+            {
+                turnRight();
+            	LorR = 0;
+            }
+        }
+  
+*/
+
+// find questions for game
+
+
+
+
+
+
+

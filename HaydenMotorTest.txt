@@ -1,0 +1,111 @@
+#include <kipr/botball.h>
+
+//Created by: Hayden Doty on 12 Jan 2019
+int left_motor=0;
+int right_motor=1;
+int arm=0;
+int claw=1;
+int arm_up=0;
+int arm_down=931;
+int claw_close=836;
+int claw_grab=974;
+int claw_open=1374;
+int claw_get_botguy=850;
+int button=0;
+int not_pressed=1;
+int pressed=0;
+
+int main()
+{
+    //Turns on certain motors at specific velocity
+    //Make the robot drive forward like a good boi
+    motor(left_motor, 80);
+    motor(right_motor, 80);
+    //Makes the robot wait to change what it's doing like a good boi
+    msleep(2000);
+    //Turns all off
+    //Make the robot stop moving like a good boi
+    ao();
+    
+    //Will make the robot back up to where it was like a good boi
+    motor(left_motor, -80);
+    motor(right_motor, -80);
+    msleep(2000);
+    ao();
+    
+    //Now lets make it try to turn like a good boi
+    motor(left_motor,60);
+    motor(right_motor,-60);
+    msleep(2000);
+    ao();
+    
+    //Will go forward after turning
+    motor(left_motor,80);
+    motor(right_motor,80);
+    msleep(2000);
+    ao();
+    
+    //Back theat phat bot up
+    motor(left_motor,-80);
+    motor(right_motor,-80);
+    msleep(2000);
+    ao();
+    
+    
+    //We're gonna do some servo stuffs now
+         //We are gonna wave up and down then make grabby motions
+    //arm_down = 986
+    //arm_up = 0
+    //claw_open= 1374
+    //claw_grab= 1040
+    //claw_close= 909
+    //All the servos are gonna turn on now like good bois
+    enable_servos();
+    //Will set servo on specific port to go to X position
+    set_servo_position(arm, arm_up);
+    msleep(500);
+    set_servo_position(claw, claw_close);
+    msleep(500);
+    set_servo_position(arm, arm_down);
+    msleep(500);
+    set_servo_position(claw, claw_open);
+    msleep(500);
+    set_servo_position(claw, claw_grab);
+    msleep(500);
+    set_servo_position(arm, arm_up);
+    msleep(500);
+    //Time to make them phat servos stop doing stuff like good bois
+    //Don't wanna drain that phat batt
+    disable_servos();
+    
+    
+    
+    //Now we are gonna drive forward because yayy!
+    motor(left_motor, 80);
+    motor(right_motor, 80);
+    msleep(2000);
+    ao();
+    
+    //Victory lap
+    motor(left_motor, 80);
+    motor(right_motor, 30);
+    msleep(16000);
+    ao();
+    
+    //Let's hit a wall now...don't drink and drive kids
+    while(digital(button) ==not_pressed)
+    {
+      motor(left_motor, 80);
+      motor(right_motor, 80);
+    }
+    ao();
+    
+    //Time to run form the scene of the crime
+    motor(left_motor, -80);
+    motor(right_motor, -80);
+    msleep(4000);
+    ao();
+    
+    
+    return 0;
+}

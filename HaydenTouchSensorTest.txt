@@ -1,0 +1,37 @@
+#include <kipr/botball.h>
+
+//Created by: Hayden Doty 12 Jan 2019
+int left_motor=0;
+int right_motor=1;
+int arm=0;
+int claw=1;
+int arm_up=0;
+int arm_down=931;
+int claw_close=836;
+int claw_grab=974;
+int claw_open=1374;
+int claw_get_botguy=850;
+int button=0;
+int not_pressed=1;
+int pressed=0;
+
+int main()
+{
+    //Let's hit a wall now...don't drink and drive kids
+    while (true)
+    {
+        if (!digital(button))
+    {
+      motor(left_motor, 80);
+      motor(right_motor, 80);
+    }
+    ao();
+    
+    //Time to run form the scene of the crime
+    motor(left_motor, -80);
+    motor(right_motor, -80);
+    msleep(4000);
+    ao();
+    
+    return 0;
+}

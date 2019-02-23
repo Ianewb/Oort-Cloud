@@ -1,0 +1,49 @@
+#include <kipr/botball.h>
+int leftMotor = 1;
+int rightMotor = 0;
+int arm_port = 0;
+int arm_up = 0; 
+int arm_down = 1000;
+
+void driveStraight(int power, int time)
+{
+    motor(leftMotor, power);
+    motor(rightMotor, power);
+    msleep(time);
+}
+
+void rotateRight(int power, int time)
+{
+    motor(leftMotor, power);
+    motor(rightMotor, -power);
+    msleep(time);
+}
+
+void rotateLeft(int power, int time)
+{
+    motor(leftMotor, -power);
+    motor(rightMotor, power);
+    msleep(time);
+}
+
+int main()
+{
+    while (digital(0) == 0)
+    {
+        if (analog(0) > 3400)
+        {
+            motor(0, 5);
+            motor(3, 90);
+        }
+        
+        else
+        {
+            motor(0, 90);
+            motor(3, 5);
+        }
+    }
+    ao();
+    
+    return 0;
+    
+}

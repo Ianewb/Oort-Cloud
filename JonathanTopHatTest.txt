@@ -1,0 +1,61 @@
+#include <kipr/botball.h>
+int leftMotor = 1;
+int rightMotor = 0;
+int arm_port = 0;
+int arm_up = 0; 
+int arm_down = 1000;
+int claw_port = 1;
+int claw_open = 2047;
+int claw_close = 1040;   //FOR YELLOW CUBE THIS MAY CHANGE FOR ANYTHING ELSE
+
+void driveStraight(int power, int time)
+{
+    motor(leftMotor, power);
+    motor(rightMotor, power);
+    msleep(time);
+}
+
+void rotateRight(int power, int time)
+{
+    motor(leftMotor, power);
+    motor(rightMotor, -power);
+    msleep(time);
+}
+
+void rotateLeft(int power, int time)
+{
+    motor(leftMotor, -power);
+    motor(rightMotor, power);
+    msleep(time);
+}
+
+int main()
+{
+    enable_servos();
+    set_servo_position(claw_port, claw_open);
+    msleep(500);
+    while (analog(1) < (2900))     //Move forward until an object is hit
+           {
+               motor(0, 100);
+               motor(1, 100);
+           }
+    ao();
+    set_servo_position(claw_port, claw_close);    //Pick up the object
+    msleep(1000);
+    set_servo_position(arm_port, arm_up);
+    msleep(1000);
+    rotateRight(100, 1500);                       //Rotate right 90 degrees
+    driveStraight(100, 3000);
+    ao();
+    set_servo_position(arm_port, arm_down);     //Set object down and bring claw back up
+    msleep(1000);
+    set_servo_position(claw_port, claw_open);
+    msleep(500);
+    set_servo_position(arm_port, arm_up);
+    driveStraight(-100, 2000);                     //Move backwards a bit, and set claw back down
+    ao();                                        //as though the car is parking
+    set_servo_position(arm_port, arm_down);
+    set_servo_position(claw_port, claw_close);
+           
+	return 0;
+}
