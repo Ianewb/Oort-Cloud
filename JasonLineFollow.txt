@@ -44,7 +44,9 @@ void STAHP()
 int main()
 {
     //as long as the top hat reads black, move forward, else, arc
-	while(analog(topHat) > black)
+    wait_for_light(0); // light sensor in analog port 0
+    
+    while(analog(topHat) > black)
     {
         moveForward(50, 1);
         //turn left when not reading black, if still reading white then turn right twice.
