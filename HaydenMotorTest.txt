@@ -17,6 +17,9 @@ int pressed=0;
 
 int main()
 {
+
+    //Anthony - You can make methods for movements, rotations, etc... instead of calling motor, like, 50 times
+
     //Turns on certain motors at specific velocity
     //Make the robot drive forward like a good boi
     motor(left_motor, 80);
