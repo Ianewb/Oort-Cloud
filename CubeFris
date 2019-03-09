@@ -19,7 +19,7 @@ int rightAng = 1830;
 
 int ET = 1; //port of ET sensor
 int topHat = 2; // port of tophat sensor
-int Touch = 3; // port of touch sensor 
+int Touch = 9; // port of touch sensor 
 
 int black = 3000; //this is not an accurate reading. the actual value of black is about 3650 - 3890 or something like that
 
@@ -102,9 +102,9 @@ void posServo(int input, int target)
 
 void distRange(int lowBound, int upBound)
 {
-    while(analog(1) < lowBound)
+    while(analog(ET) < lowBound)
         {
-            if(analog(1) > upBound)
+            if(analog(ET) > upBound)
             {
                 moveForward(-20,10);   
             }
@@ -197,7 +197,7 @@ int main()
     moveForward(25,10); // to make sure on not black
     
     //grab water reclamation unit
-    while(digital(9) != 1)
+    while(digital(Touch) != 1)
     {
         moveForward(-25,10);
     }
@@ -207,19 +207,19 @@ int main()
     searchBL();
     moveForward(10,10);
     
-    /*while(analog(0) <black)
+    /*while(analog(topHat) <black)
     {
         moveForward(-25,10);
     }*/
     
-    while(analog(1) >2200)
+    while(analog(ET) >2200)
     {
         moveForward(25, 10);
     }
     
     posServo(CLAW_SERVO, 1300);
     
-    while(analog(0) < black)
+    while(analog(topHat) < black)
     {
         moveForward(-25, 10);
     }
@@ -229,10 +229,11 @@ int main()
     
     searchBL();
     
-    moveForward(25,10);
+    moveForward(25,30);
     rotate_left90(500);
     searchBL();
     searchWH();
+    moveForward(25, 30);
     
     ao();
     return 0;
