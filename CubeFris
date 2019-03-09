@@ -3,6 +3,7 @@
 
 int ARM_SERVO = 1; //port of motor that controls crane
 int ARM_START = 1020; // arm starts raised
+int ARM_UP = 700; //arm up position
 int ARM_DOWN = 100; // arm lowered
 
 int CLAW_SERVO = 0; //port of servo that controls claw
@@ -47,10 +48,10 @@ void test()
 int main()
 {
     //setup
-    create_connect();
     enable_servos();
     
     set_servo_position(CLAW_SERVO, CLAW_START);
+    set_servo_position(ARM_SERVO, ARM_START);
     
     wait_for_light(0);
 
