@@ -1,0 +1,156 @@
+//CubeFris
+#include <kipr/botball.h>
+
+int ARM_SERVO = 1; //port of motor that controls crane
+
+int CLAW_SERVO = 0; //port of servo that controls claw
+
+int CLAW_CLOSE = 920; //claw state while maintaining grip on cubes
+int CLAW_START = 1017; //claw state while during setup
+int CLAW_OPEN = 1250; //claw state while approaching cubes
+
+int MOTOR_L = 0; //left motor port
+int MOTOR_R = 1; // right motor port
+
+int ET = 1; //port of ET sensor
+int TopHat = 2; // port of tophat sensor
+int Touch = 3; // port of touch sensor 
+
+void rotate_right90(int speed) //rotates 90 degrees CCW
+{
+    set_create_total_angle(0); //sets initial angle to 0
+    while(get_create_total_angle() > -72) //runs until the angle offset is 90 degrees
+    {
+        create_drive_direct(speed, -speed); //rotates robot to the right
+        msleep(10);
+    }
+    create_stop(); //halts turning motion to prevent indefinite spin
+}
+
+void rotate_left90(int speed) //rotates 90 degrees CW (mirror of rotate_right90)
+{
+    set_create_total_angle(0);
+    while(get_create_total_angle() < 72.8)
+    {
+        create_drive_direct(-speed, speed);
+        msleep(10);
+    }
+    create_stop();
+}
+
+void test()
+{
+    
+}
+int main()
+{
+    //setup
+    create_connect();
+    enable_servos();
+    
+    set_servo_position(CLAW_SERVO, CLAW_START);
+    
+    wait_for_light(0);
+
+    
+    //run begins
+    shut_down_in(119); //terminates program in 119 seconds in case of glitching
+    
+    create_drive_direct(200, 200); //pushes leftmost pom cluster off black tape
+    msleep(2500);
+    
+    rotate_left90(15);
+    msleep(20); 
+    rotate_left90(15);
+    msleep(20);
+    
+    //rotate_left90(50);
+    //msleep(10);
+
+    motor(CRANE_MOTOR, -100); //lowers arm
+    msleep(750);
+    motor(CRANE_MOTOR, 0);
+
+    /*set_create_total_angle(0);
+    while(get_create_total_angle() > -73 && analog(ET) < 1600) //finds pole
+    {
+       create_drive_direct(25, -25);
+       msleep(10);
+    }*/
+
+    create_stop();  
+
+    create_drive_direct(-50, -50); //approaches Frisbee pole
+    msleep(5300);
+    create_stop();
+    msleep(1000);
+
+    motor(CRANE_MOTOR, 100); //raises arm, collects Frisbee
+    msleep(1500);
+    motor(CRANE_MOTOR, 0);
+    
+    create_drive_direct(250, 250);
+    msleep(2200);
+    
+    rotate_right90(25);//turns claw towards the mid lane
+    msleep(1);
+    
+    set_servo_position(CLAW_SERVO, CLAW_OPEN); //prepares claw for approaching
+    msleep(1000);
+    
+    create_drive_direct(-190, -190); //drives to middle line
+    msleep(4700);
+    
+    rotate_left90(25); //turns to face cubes
+    
+    motor(CRANE_MOTOR, 100); //raises crane to prevent collision with neutral box
+    msleep(1000);
+    motor(CRANE_MOTOR, 0);
+    
+    create_drive_direct(-50, -50);
+    msleep(3000);
+    create_drive_direct(-25, -25); //slows down to prevent tipping cubes over
+    msleep(2300);
+    
+    set_servo_position(CLAW_SERVO, CLAW_CLOSE); //grabs stack of cubes
+    msleep(1000);
+    
+    create_drive_direct(100, 100); //backs away from neutral zone
+    msleep(2000);
+    
+    rotate_right90(40); //does a 180 degree turn to face the middle scoring zone
+    create_drive_direct(100, 100); //backs away from divider
+    msleep(600);
+    rotate_right90(40);
+    
+    motor(CRANE_MOTOR, -100); //lowers crane to prevent collision with tram
+    msleep(2500);
+    motor(CRANE_MOTOR, 0);
+    
+    create_drive_direct(-120, -120); //approaches middle scoring zone
+    msleep(1500);
+    
+    create_drive_direct(50, -50); //turns mildly
+    msleep(400);
+    
+    create_drive_direct(-115, -115); //enters middle scoring zone
+    msleep(1000);
+    
+    create_drive_direct(-50, 50); //turns back, shifting the red cube
+    msleep(400);
+    
+    rotate_right90(50); //clears any random poms out of the way
+    msleep(1000);
+    rotate_left90(50);
+    msleep(1000);
+    
+    set_servo_position(CLAW_SERVO, CLAW_OPEN); //drops cubes
+    msleep(1000);
+    set_servo_position(CLAW_SERVO, CLAW_START); //tips top cube into zone
+    msleep(1000);
+    
+    create_stop();
+    
+    create_disconnect(); //closing
+    return 0;
+}
