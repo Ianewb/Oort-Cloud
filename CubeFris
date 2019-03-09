@@ -2,6 +2,8 @@
 #include <kipr/botball.h>
 
 int ARM_SERVO = 1; //port of motor that controls crane
+int ARM_START = 1020; // arm starts raised
+int ARM_DOWN = 100; // arm lowered
 
 int CLAW_SERVO = 0; //port of servo that controls claw
 
