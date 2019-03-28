@@ -17,6 +17,7 @@ int pressed=0;
 
 int main()
 {
+    wait_for_light(0);
     //Turns on certain motors at specific velocity
     //Make the robot drive forward like a good boi
     motor(left_motor, 80);

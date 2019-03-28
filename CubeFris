@@ -1,0 +1,228 @@
+//CubeFris
+#include <kipr/botball.h>
+
+int ARM_SERVO = 1; //port of motor that controls crane
+int ARM_START = 1000; // arm starts raised
+int ARM_UP = 700; //arm up position
+int ARM_DOWN = 50; // arm lowered
+
+int CLAW_SERVO = 0; //port of servo that controls claw
+
+int CLAW_CLOSE = 800; //claw state while maintaining grip on cubes
+int CLAW_START = 1000; //claw state while during setup
+int CLAW_OPEN = 1000; //claw state while approaching cubes
+
+int leftMotor = 0; //left motor port
+int rightMotor = 1; // right motor port
+
+int rightAng = 1830;
+
+int ET = 1; //port of ET sensor
+int topHat = 2; // port of tophat sensor
+int Touch = 9; // port of touch sensor 
+
+int black = 2500; //this is not an accurate reading. the actual value of black is about 3650 - 3890 or something like that
+
+//move forward method
+void moveForward(int power, int time)
+{
+    motor(leftMotor, -power);
+    motor(rightMotor, power);
+    msleep(time);
+}
+//turn left method
+void turnLeft()
+{
+ 	motor(leftMotor, 25);
+    motor(rightMotor, 25);
+    msleep(350);
+}
+void arcLeft()
+{
+ 	    mrp(0, 500, 1830);// arcs left for 1830 ticks
+}
+//turn right method
+void turnRight()
+{
+ 	motor(leftMotor, -25);
+    motor(rightMotor, -25);
+    msleep(350);
+}
+void arcRight()
+{
+ 	mrp(1, -500, 1830);// arcs right for 1830 ticks;   
+}
+
+void rotate_right90(int speed) //rotates 90 degrees CCW
+{
+    mrp(0, -speed, 915);// rotates right for 1830 ticks
+    mrp(1, speed, 915);
+    msleep(3250);
+}
+
+void rotate_left90(int speed) //rotates 90 degrees CW (mirror of rotate_right90)
+{
+    mrp(0, speed, -915);// rotates left for 1830 ticks
+    mrp(1, -speed, -915);// rotates right for 1830 ticks
+    msleep(3250);
+}
+
+void posServo(int input, int target)
+{
+    int t = 0;
+    while(t != target)
+    {
+        if(t < target)
+        {
+            t+= 25;
+            set_servo_position(ARM_SERVO, t);
+        }
+        else
+        {
+            t-=25;
+            set_servo_position(ARM_SERVO, t);
+        }
+    }
+    
+}
+
+void distRange(int lowBound, int upBound)
+{
+    while(analog(ET) < lowBound)
+        {
+            if(analog(ET) > upBound)
+            {
+                moveForward(-50,10);   
+            }
+            moveForward(50,10);
+        }
+}
+void stackFood(int num)
+{
+    posServo(ARM_SERVO, ARM_UP);
+     if(num == 1)//first blocks
+    {
+        distRange(1350, 1450);
+        posServo(ARM_SERVO, 250);        
+    }    
+    if(num == 2)//stacking to 2
+    {
+        distRange(1090, 1120);
+        posServo(ARM_SERVO, 250);        
+    }    
+    if(num == 3)//stacking to 3
+    {
+        distRange(1040, 1120);
+        posServo(ARM_SERVO, 250);         
+    }
+     if(num == 4)//stacking to 4
+    {
+        distRange(1850, 1900);
+        posServo(ARM_SERVO, 250);         
+    }
+    moveForward(35, 10);
+    moveForward(-35, 10);
+    posServo(CLAW_SERVO, CLAW_OPEN);
+    posServo(ARM_SERVO, ARM_DOWN);
+    moveForward(30, 10);
+    posServo(CLAW_SERVO, CLAW_CLOSE);
+    posServo(ARM_SERVO, ARM_START);
+
+}
+
+void searchBL()
+{
+    while(analog(topHat) < black)//searches for black line
+    {
+        moveForward(75,10);
+    }
+}
+
+void searchWH()
+{
+    while(analog(topHat) > black)//searches for not black
+    {
+        moveForward(75,10);
+    }
+}
+
+
+void test()
+{
+    
+}
+int main()
+{
+    //setup
+    enable_servos();
+    
+    set_servo_position(CLAW_SERVO, CLAW_START);
+    set_servo_position(ARM_SERVO, ARM_START);
+    
+    wait_for_light(0);
+
+    
+    //run begins
+    shut_down_in(119); //terminates program in 119 seconds in case of glitching
+    
+    rotate_right90(500);
+    
+    //moves to lower right corner of field
+    moveForward(75,30);
+    searchBL();
+    moveForward(25,10); // to make sure on black
+    
+    //reach middle section black line
+    rotate_left90(500);
+    searchWH();
+    searchBL();
+    
+    //push all stufs to the disaster center
+    rotate_left90(500);
+    searchWH();
+    moveForward(25,10); // to make sure on not black
+    
+    
+    //grab water reclamation unit
+    while(digital(Touch) != 1)
+    {
+        moveForward(-75,10);
+    }
+    moveForward(25,10);
+    rotate_right90(500);
+    posServo(CLAW_SERVO, 1700);
+    searchBL();
+    moveForward(30,10);
+    
+    /*while(analog(topHat) <black)
+    {
+        moveForward(-25,10);
+    }*/
+    
+    while(analog(ET) >2200)
+    {
+        moveForward(30, 10);
+    }
+    
+    posServo(CLAW_SERVO, 1300);
+    
+    while(analog(topHat) < black)
+    {
+        moveForward(-50, 10);
+    }
+    
+    //pushing water into med centers
+    rotate_left90(500);
+    
+    searchBL();
+    searchWH();
+    
+    moveForward(60,30);
+    rotate_left90(500);
+    searchBL();
+    searchWH();
+    moveForward(25, 30);
+    
+    ao();
+    return 0;
+}

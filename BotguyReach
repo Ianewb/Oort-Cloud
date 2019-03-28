@@ -1,0 +1,78 @@
+//CubeFris
+#include <kipr/botball.h>
+
+int ARM_SERVO = 1; //port of motor that controls crane
+int ARM_START = 1400; // arm starts raised
+int ARM_UP = 1350; //arm up position
+int ARM_DOWN = 650; // arm lowered
+
+int CLAW_SERVO = 0; //port of servo that controls claw
+
+int CLAW_CLOSE = 750; //claw state while maintaining grip on everythimg
+int CLAW_START = 400; //claw state while during setup
+int CLAW_OPEN = 650; //claw state while approaching citizens
+
+void rotate_right90(int speed) //rotates 90 degrees CCW
+{
+    set_create_total_angle(0); //sets initial angle to 0
+    while(get_create_total_angle() > -72) //runs until the angle offset is 90 degrees
+    {
+        create_drive_direct(speed, -speed); //rotates robot to the right
+        msleep(10);
+    }
+    create_stop(); //halts turning motion to prevent indefinite spin
+}
+
+void rotate_left90(int speed) //rotates 90 degrees CW (mirror of rotate_right90)
+{
+    set_create_total_angle(0);
+    while(get_create_total_angle() < 72.8)
+    {
+        create_drive_direct(-speed, speed);
+        msleep(10);
+    }
+    create_stop();
+}
+
+void moveFB(int speed)
+{
+        create_drive_direct(speed,speed);
+}
+int main()
+{
+    //setup
+    create_connect();
+    enable_servos();
+    
+    set_servo_position(CLAW_SERVO, CLAW_START);
+    set_servo_position(ARM_SERVO, ARM_START);
+    
+    wait_for_light(0);
+
+    
+    //run begins
+    shut_down_in(119); //terminates program in 119 seconds in case of glitching
+    
+    moveFB(200); //positions for grabbing mayor left
+    msleep(1758.41);
+    
+    rotate_left90(15);
+    msleep(20);
+    
+    moveFB(200);
+    msleep(949);
+    
+    rotate_right90(15);
+    msleep(20);
+    
+    moveFB(200);
+    msleep(550.46);
+    
+    //rotate_left90(50);
+    //msleep(10);
+
+    create_stop();
+    
+    create_disconnect(); //closing
+    return 0;
+}
